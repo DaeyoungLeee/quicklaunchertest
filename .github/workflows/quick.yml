@@ -23,6 +23,12 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
+        name: Export Port
+        run: source config/app.conf
+      -
+        name: Add Port to Dockerfile
+        run: cat Dockerfile > Dockerfile.bak && echo -e "ARG TO_PORT=$to_port\n" > Dockerfile && cat Dockerfile.bak >> Dockerfile && echo -e '\nEXPOSE ${TO_PORT}' >> Dockerfile
+      -
         name: Docker meta
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
