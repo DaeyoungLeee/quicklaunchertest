@@ -1,8 +1,9 @@
 variable "image" {}
 variable "static_port" {}
 variable "to_port" {}
+variable "job_id" {}
 
-job "testapp2" {
+job "${job_id}" {
 
   datacenters = ["dc1"]
 

@@ -81,4 +81,4 @@ jobs:
         sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
         sudo apt-get update && sudo apt-get install nomad
         source config/app.conf
-        nomad job run -address=${{ env.NOMAD_CLUSTER }} -var=image=${{ env.DOCKER_IMAGE }}:latest -var=static_port=${static_port} -var=to_port=${to_port} ./${{ env.APP_NAME }}.nomad
+        nomad job run -address=${{ env.NOMAD_CLUSTER }} -var=job_id=${service_id} -var=image=${{ env.DOCKER_IMAGE }}:latest -var=static_port=${static_port} -var=to_port=${to_port} ./${{ env.APP_NAME }}.nomad
