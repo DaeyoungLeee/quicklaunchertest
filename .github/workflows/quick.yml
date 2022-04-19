@@ -1,14 +1,9 @@
 name: DEV - Deploy to Nomad Cluster
 
 on:
-#   issues:
-#     types: [opened, edited]
   push:
-    branches: [ develop ]
-    #paths-ignore:
-    # - '.github/**'
-    # - '.nomad/**'
-
+    branches: [ develop,master ]
+    
 env:
   # Organization Secrets
   NOMAD_CLUSTER: ${{ secrets.NOMAD_CLUSTER }}
