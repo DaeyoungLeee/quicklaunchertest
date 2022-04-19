@@ -1,10 +1,10 @@
 name: DEV - Deploy to Nomad Cluster
 
 on:
-  issues:
-    types: [opened, edited]
-  #push:
-    #branches: [ develop ]
+#   issues:
+#     types: [opened, edited]
+  push:
+    branches: [ develop ]
     #paths-ignore:
     # - '.github/**'
     # - '.nomad/**'
@@ -79,5 +79,4 @@ jobs:
         curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
         sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
         sudo apt-get update && sudo apt-get install nomad
-        export VAULT_ADDR='127.0.0.1:8200'
         nomad job run -address=${{ env.NOMAD_CLUSTER }} -var=image='dae93827/quicklauncher:latest' ./${{ env.APP_NAME }}.nomad
