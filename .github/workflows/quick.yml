@@ -79,4 +79,5 @@ jobs:
         curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
         sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
         sudo apt-get update && sudo apt-get install nomad
+        export VAULT_ADDR='${{ env.NOMAD_CLUSTER }}:8200'
         nomad job run -address=${{ env.NOMAD_CLUSTER }} -var=image='dae93827/quicklauncher:latest' -var=app-env=${{ env.DEPLOY_ENV }} ./${{ env.APP_NAME }}.nomad
