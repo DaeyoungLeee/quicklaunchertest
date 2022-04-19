@@ -1,9 +1,4 @@
-variable "image" {}
-variable "static_port" {}
-variable "to_port" {}
-variable "job_id" {}
-
-job $service_id {
+job demoapp {
 
   datacenters = ["dc1"]
 
@@ -12,8 +7,8 @@ job $service_id {
     network {
       mode = "bridge"
       port "http" {
-	static = var.static_port
-        to = var.to_port
+        static = 20213
+        to = 80
       }
     }
 
@@ -30,15 +25,11 @@ job $service_id {
     }
 
     task "server" {
-      env {
-        PORT    = "${NOMAD_PORT_http}"
-        NODE_IP = "${NOMAD_IP_http}"
-      }
-
+      
       driver = "docker"
 
       config {
-        image = var.image
+        image = "dae93827/uplus-web2-new"
         ports = ["http"]
       }
     }
