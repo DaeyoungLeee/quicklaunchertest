@@ -9,6 +9,7 @@ env:
   NOMAD_CLUSTER: ${{ secrets.NOMAD_CLUSTER }}
   DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
   DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  DOCKER_IMAGE: ${{secrets.DOCKER_IMAGE}}
   #NOMAD_TOKEN: ${{ secrets.DEV_NOMAD_TOKEN }}
   # Workflow 변수
   # - 해상 서비스 및 애플리케이션에 맞게 수정 필요
@@ -80,4 +81,4 @@ jobs:
         curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
         sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
         sudo apt-get update && sudo apt-get install nomad
-        nomad job run -address=${{ env.NOMAD_CLUSTER }} -var=image='dae93827/quicklauncher:latest' -var=static_port=${static_port} -var=to_port=${to_port} ./${{ env.APP_NAME }}.nomad
+        nomad job run -address=${{ env.NOMAD_CLUSTER }} -var=image=${{ env.DOCKER_IMAGE }}:latest -var=static_port=${static_port} -var=to_port=${to_port} ./${{ env.APP_NAME }}.nomad
