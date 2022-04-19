@@ -35,8 +35,7 @@ job "testapp2" {
       driver = "docker"
 
       config {
-        #image = var.image
-	image = dae93827/uplus-web2-new
+        image = var.image
         ports = ["http"]
       }
     }
