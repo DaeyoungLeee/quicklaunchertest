@@ -44,7 +44,7 @@ jobs:
           
       -
         name: Add Port to Dockerfile
-        run: source config/app.conf && cat Dockerfile > Dockerfile.bak && echo -e "ARG TO_PORT=$to_port\n" > Dockerfile && cat Dockerfile.bak >> Dockerfile && echo -e '\nEXPOSE ${TO_PORT}' >> Dockerfile
+        run: source config/app.conf && cat Dockerfile > Dockerfile.bak && echo -e "ARG TO_PORT=$to_port\n" > Dockerfile && cat Dockerfile.bak >> Dockerfile && echo -e '\nEXPOSE ${TO_PORT}' >> Dockerfile && cat Dockerfile
         
       -
         name: Build and push
