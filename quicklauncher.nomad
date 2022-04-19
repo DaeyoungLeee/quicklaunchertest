@@ -1,16 +1,18 @@
 variable "image" {}
+variable "static_port" {}
+variable "to_port" {}
 
 job "testapp2" {
 
   datacenters = ["dc1"]
 
-  group "demo" {
+  group "quick-launcher" {
     count = 1
     network {
       mode = "bridge"
       port "http" {
-	static = 20941
-        to = 80
+	static = var.static_port
+        to = var.to_port
       }
     }
 
