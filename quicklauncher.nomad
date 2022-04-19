@@ -1,5 +1,4 @@
 variable "image" {}
-variable "app-env" {}
 
 job "testapp2" {
 
