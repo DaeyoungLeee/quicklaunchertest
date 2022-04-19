@@ -3,7 +3,7 @@ variable "static_port" {}
 variable "to_port" {}
 variable "job_id" {}
 
-job "${job_id}" {
+job "var.job_id" {
 
   datacenters = ["dc1"]
 
