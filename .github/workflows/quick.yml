@@ -1,0 +1,82 @@
+name: DEV - Deploy to Nomad Cluster
+
+on:
+  issues:
+    types: [opened, edited]
+  #push:
+    #branches: [ develop ]
+    #paths-ignore:
+    # - '.github/**'
+    # - '.nomad/**'
+
+env:
+  # Organization Secrets
+  NOMAD_CLUSTER: ${{ secrets.NOMAD_CLUSTER }}
+  DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  #NOMAD_TOKEN: ${{ secrets.DEV_NOMAD_TOKEN }}
+  # Workflow 변수
+  # - 해상 서비스 및 애플리케이션에 맞게 수정 필요
+  APP_NAME: quicklauncher       # Application 이름. Image TAG Prefix로 사용 됨
+  DEPLOY_ENV : dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+      steps:
+      - 
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: dae93827/quicklauncher
+          tag-semver: |
+            {{version}}
+            {{major}}.{{minor}}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+
+  deploy:
+    
+    name: Deploy to DEV Environment
+    runs-on: ubuntu-latest
+    
+    steps:    
+    # 소스 가져오기
+    - name: Checkout
+      uses: actions/checkout@v2
+        
+    # sha 난수 생성
+    - name: Short sha
+      run: echo "short_sha=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
+
+    # 배포를 위한 nomad 설정
+    - name: Deploy to Nomad
+      id: deploy-nomad
+      env:
+        IMAGE_TAG: DEV_${{ env.APP_NAME }}_${{ env.short_sha }}
+      run: |
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+        sudo apt-get update && sudo apt-get install nomad
+        nomad job run -address=${{ env.NOMAD_CLUSTER }} -var=image='dae93827/quicklauncher:latest' -var=app-env=${{ env.DEPLOY_ENV }} ./${{ env.APP_NAME }}.nomad
