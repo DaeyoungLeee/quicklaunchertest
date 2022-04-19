@@ -1,6 +1,9 @@
-FROM nginx:alpine
+FROM ubuntu:14.04
 
-COPY config/nginx.conf /etc/nginx/conf.d/nginx.conf
+RUN apt-get update
+RUN apt-get install -y nginx
+
+WORKDIR /etc/nginx 
 
 CMD ["nginx", "-g", "daemon off;"]
 
