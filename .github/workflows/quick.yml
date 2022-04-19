@@ -23,6 +23,12 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
+        name: Export Port
+        run: source config/app.conf
+      -
+        name: Add Port to Dockerfile
+        run: cat Dockerfile > Dockerfile.bak && echo -e "ARG TO_PORT=$to_port\n" > Dockerfile && cat Dockerfile.bak >> Dockerfile && echo -e '\nEXPOSE ${TO_PORT}' >> Dockerfile
+      -
         name: Docker meta
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
@@ -74,4 +80,4 @@ jobs:
         curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
         sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
         sudo apt-get update && sudo apt-get install nomad
-        nomad job run -address=${{ env.NOMAD_CLUSTER }} -var=image='dae93827/quicklauncher:latest' ./${{ env.APP_NAME }}.nomad
+        nomad job run -address=${{ env.NOMAD_CLUSTER }} -var=image='dae93827/quicklauncher:latest' -var=static_port= -var=to_port= ./${{ env.APP_NAME }}.nomad
